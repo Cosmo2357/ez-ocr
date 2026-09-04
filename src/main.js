@@ -3,6 +3,7 @@ import { getVersion } from "@tauri-apps/api/app";
 import { check } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
 
+const BASE = import.meta.env.BASE_URL;
 const $ = (id) => document.getElementById(id);
 const drop = $("drop");
 const fileInput = $("file");
@@ -73,9 +74,9 @@ async function getWorker(lang) {
     worker = null;
   }
   worker = await createWorker(lang, 1, {
-    workerPath: "/tesseract/worker.min.js",
-    corePath: "/tesseract/",
-    langPath: "/tessdata/",
+    workerPath: `${BASE}tesseract/worker.min.js`,
+    corePath: `${BASE}tesseract/`,
+    langPath: `${BASE}tessdata/`,
     gzip: true,
     cacheMethod: "none",
     logger: (m) => setStatus(m.status, m.progress),

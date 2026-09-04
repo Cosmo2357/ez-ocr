@@ -3,6 +3,11 @@
 A tiny desktop app that pulls text out of images so you can copy & paste it.  
 Works on Windows and Mac, runs fully offline. English by default, Japanese optional.
 
+## Use it in the browser
+
+No install needed: **https://cosmo2357.github.io/ez-ocr/**  
+Everything runs inside your browser; images are never uploaded anywhere. The first load fetches about 35 MB of OCR data, later visits are cached.
+
 ## Download
 
 Grab the file for your OS from the [latest release](https://github.com/Cosmo2357/ez-ocr/releases/latest).
