@@ -46,11 +46,11 @@ jobs:
           tagName: ${{ github.ref_name }}
           releaseName: "ez-ocr ${{ github.ref_name }}"
           releaseBody: |
-            ## ダウンロード
-            - **Windows**: `ez-ocr_x.x.x_x64-setup.exe`（インストーラー）
+            ## Download
+            - **Windows**: `ez-ocr_x.x.x_x64-setup.exe` (installer)
             - **Mac**: `ez-ocr_x.x.x_universal.dmg`
 
-            初回起動時の警告についてはリポジトリの README を参照してください。
+            See the README for the first-launch security warning.
           releaseDraft: false
           prerelease: false
           includeUpdaterJson: true

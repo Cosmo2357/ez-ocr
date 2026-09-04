@@ -23,21 +23,21 @@ let worker = null;
 let workerLang = null;
 let busy = false;
 
-const STATUS_JA = {
-  "loading tesseract core": "エンジンを読み込み中",
-  "initializing tesseract": "エンジンを初期化中",
-  "initialized tesseract": "初期化完了",
-  "loading language traineddata": "言語データを読み込み中",
-  "loading language traineddata (from cache)": "言語データを読み込み中",
-  "loaded language traineddata": "言語データ読み込み完了",
-  "initializing api": "準備中",
-  "initialized api": "準備完了",
-  "recognizing text": "文字を読み取り中",
+const STATUS_TEXT = {
+  "loading tesseract core": "Loading OCR engine",
+  "initializing tesseract": "Initializing OCR engine",
+  "initialized tesseract": "Engine ready",
+  "loading language traineddata": "Loading language data",
+  "loading language traineddata (from cache)": "Loading language data",
+  "loaded language traineddata": "Language data loaded",
+  "initializing api": "Preparing",
+  "initialized api": "Ready",
+  "recognizing text": "Reading text",
 };
 
 function setStatus(status, progress) {
   progressWrap.hidden = false;
-  statusEl.textContent = STATUS_JA[status] || status;
+  statusEl.textContent = STATUS_TEXT[status] || status;
   progressBar.style.width = `${Math.round((progress || 0) * 100)}%`;
 }
 
@@ -113,11 +113,11 @@ async function runOcr() {
     const { data } = await w.recognize(currentImage);
     result.value = cleanup(data.text, lang);
     copyBtn.disabled = !result.value;
-    statusEl.textContent = result.value ? "完了" : "文字が見つかりませんでした";
+    statusEl.textContent = result.value ? "Done" : "No text found";
     progressBar.style.width = "100%";
   } catch (e) {
     console.error(e);
-    statusEl.textContent = `エラー: ${e?.message || e}`;
+    statusEl.textContent = `Error: ${e?.message || e}`;
     progressWrap.hidden = false;
   } finally {
     busy = false;
@@ -196,7 +196,7 @@ async function checkForUpdate() {
     const update = await check();
     if (!update) return;
     const banner = $("update-banner");
-    $("update-text").textContent = `新しいバージョン v${update.version} があります`;
+    $("update-text").textContent = `Version v${update.version} is available`;
     banner.hidden = false;
     $("update-dismiss").onclick = () => (banner.hidden = true);
     $("update-btn").onclick = async () => {
@@ -211,16 +211,16 @@ async function checkForUpdate() {
           else if (ev.event === "Progress") {
             got += ev.data.chunkLength;
             $("update-text").textContent = total
-              ? `ダウンロード中 ${Math.round((got / total) * 100)}%`
-              : "ダウンロード中...";
+              ? `Downloading ${Math.round((got / total) * 100)}%`
+              : "Downloading...";
           } else if (ev.event === "Finished") {
-            $("update-text").textContent = "インストール中...再起動します";
+            $("update-text").textContent = "Installing... restarting";
           }
         });
         await relaunch();
       } catch (e) {
         console.error(e);
-        $("update-text").textContent = `更新に失敗しました: ${e?.message || e}`;
+        $("update-text").textContent = `Update failed: ${e?.message || e}`;
         btn.disabled = false;
       }
     };

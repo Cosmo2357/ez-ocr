@@ -1,47 +1,48 @@
 # ez-ocr
 
-画像から文字を読み取ってコピペできる、シンプルなデスクトップ OCR アプリです。  
-Windows / Mac 対応。日本語と英語に対応し、オフラインで動きます。
+A tiny desktop app that pulls text out of images so you can copy & paste it.  
+Works on Windows and Mac, runs fully offline. English by default, Japanese optional.
 
-## ダウンロード
+## Download
 
-[Releases ページ](https://github.com/Cosmo2357/ez-ocr/releases/latest) から自分の OS 用のファイルをダウンロードしてください。
+Grab the file for your OS from the [latest release](https://github.com/Cosmo2357/ez-ocr/releases/latest).
 
-| OS | ファイル |
+| OS | File |
 | --- | --- |
 | Windows | `ez-ocr_x.x.x_x64-setup.exe` |
-| Mac (Apple Silicon / Intel 共通) | `ez-ocr_x.x.x_universal.dmg` |
+| Mac (Apple Silicon & Intel) | `ez-ocr_x.x.x_universal.dmg` |
 
-### 初回起動時の警告について
+### First-launch warning
 
-このアプリは開発者証明書で署名していないため、初回だけ OS の警告が出ます。
+The app is not signed with a developer certificate, so the OS shows a warning the first time.
 
-- **Windows**: 「Windows によって PC が保護されました」→「詳細情報」→「実行」
-- **Mac**: 「開発元を検証できません」と出たら、システム設定 → プライバシーとセキュリティ → 一番下の「このまま開く」。  
-  それでも開けない場合はターミナルで `xattr -cr /Applications/ez-ocr.app` を実行してください。
+- **Windows**: "Windows protected your PC" → click **More info** → **Run anyway**
+- **Mac**: If you see "cannot be opened because the developer cannot be verified", open  
+  **System Settings → Privacy & Security**, scroll down and click **Open Anyway**.  
+  If that does not work, run `xattr -cr /Applications/ez-ocr.app` in Terminal.
 
-## 使い方
+## How to use
 
-1. 画像をウィンドウにドラッグ＆ドロップ（クリックしてファイル選択、Ctrl/Cmd+V で貼り付けも可）
-2. 言語を選んで「文字を読み取る」
-3. 「コピー」ボタンでクリップボードへ
+1. Drag & drop an image into the window (or click to pick a file, or paste with Ctrl/Cmd+V)
+2. Text is extracted automatically. Change the language and hit **Read again** if needed
+3. Click **Copy**
 
-## 自動アップデート
+## Auto update
 
-起動時に新しいバージョンをチェックし、あれば画面上部に「今すぐ更新」ボタンが出ます。
+On launch the app checks GitHub for a newer version. If there is one, an **Update now** button appears at the top.
 
-## 開発
+## Development
 
 ```bash
 npm install
-npm run tauri dev     # 開発モード
-npm run tauri build   # 本番ビルド（src-tauri/target/release/bundle/ に出力）
+npm run tauri dev     # dev mode
+npm run tauri build   # release build → src-tauri/target/release/bundle/
 ```
 
-### 新バージョンをリリースする
+### Publishing a new version
 
-1. `package.json` / `src-tauri/tauri.conf.json` / `src-tauri/Cargo.toml` の version を上げる
-2. タグを打って push する
+1. Bump `version` in `package.json`, `src-tauri/tauri.conf.json` and `src-tauri/Cargo.toml`
+2. Commit, tag and push
 
 ```bash
 git commit -am "v0.2.0"
@@ -49,16 +50,16 @@ git tag v0.2.0
 git push origin main --tags
 ```
 
-GitHub Actions が Windows / Mac 用のビルドを行い、Releases に自動で公開します。  
-`latest.json` も一緒に公開されるので、既存ユーザーには自動アップデートが届きます。
+GitHub Actions builds Windows and Mac installers and publishes them on the Releases page,  
+together with `latest.json` so existing installs get the auto-update prompt.
 
-### 署名キー
+### Update signing key
 
-アップデートの署名キーは `~/.tauri/ez-ocr.key`（パスワードは `~/.tauri/ez-ocr.key.password`）にあり、  
-GitHub の Secrets `TAURI_SIGNING_PRIVATE_KEY` / `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` に登録済みです。  
-**このキーを失うと既存ユーザーへの自動アップデートができなくなる**のでバックアップしてください。
+The updater signing key lives at `~/.tauri/ez-ocr.key` (password in `~/.tauri/ez-ocr.key.password`)  
+and is registered as the GitHub secrets `TAURI_SIGNING_PRIVATE_KEY` / `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`.  
+**If the key is lost, existing installs can no longer auto-update.** Back it up.
 
-## 技術
+## Built with
 
-- [Tauri 2](https://tauri.app/)（Rust + WebView）
-- [tesseract.js](https://github.com/naptha/tesseract.js)（Tesseract OCR の WebAssembly 版。言語データ同梱）
+- [Tauri 2](https://tauri.app/) (Rust + WebView)
+- [tesseract.js](https://github.com/naptha/tesseract.js) (Tesseract OCR compiled to WebAssembly, language data bundled)
