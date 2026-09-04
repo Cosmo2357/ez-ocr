@@ -1,0 +1,26 @@
+{
+  "name": "ez-ocr",
+  "version": "0.1.0",
+  "description": "Simple OCR desktop app (Tauri + tesseract.js)",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "tauri": "tauri"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.4",
+    "vite": "^6.4.3"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.11.1",
+    "@tauri-apps/plugin-process": "^2.3.1",
+    "@tauri-apps/plugin-updater": "^2.11.0",
+    "tesseract.js": "^6.0.1"
+  },
+  "private": true
+}
