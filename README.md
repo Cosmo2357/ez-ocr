@@ -12,9 +12,10 @@ Everything runs inside your browser; images are never uploaded anywhere. The fir
 
 ### Install it as an app
 
-Open the link above in **Chrome or Edge** and press the big **Install app** button at the top
-(or the install icon at the right end of the address bar). ez-ocr then opens in its own window
-from the Start menu / Dock like any desktop app, and keeps working without an internet connection.
+Opening the link in a normal browser tab shows a short landing page with one big **Install ez-ocr** button.
+Press it in **Chrome or Edge** and ez-ocr opens in its own window, shows up in the Start menu / Dock like
+any desktop app, and keeps working without an internet connection. The tool itself is what you see once it
+is installed; a small "Continue in the browser" link is there for browsers that cannot install web apps.
 
 ## Picture-only Word files → PDF
 

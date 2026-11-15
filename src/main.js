@@ -332,24 +332,76 @@ clearBtn.addEventListener("click", clearAll);
 copyBtn.addEventListener("click", copyText);
 result.addEventListener("input", () => setOutputEnabled(!!result.value));
 
-// --- install as an app (PWA) & offline support, browser only ---
+// --- landing page vs app, install as an app (PWA), offline support ---
+// In a plain browser tab we show a landing page that leads to installing;
+// the tool itself is shown once it runs as an installed app (or in the desktop build).
+const landing = $("landing");
+const appEl = $("app");
+const standalone = () =>
+  isTauri ||
+  matchMedia("(display-mode: standalone)").matches ||
+  matchMedia("(display-mode: window-controls-overlay)").matches ||
+  navigator.standalone === true ||
+  new URLSearchParams(location.search).get("source") === "pwa";
+
+function showApp(on) {
+  appEl.hidden = !on;
+  landing.hidden = on;
+}
+showApp(standalone());
+
 if (!isTauri) {
-  const banner = $("install-banner");
+  const installBtn = $("install-btn");
+  const headerInstall = $("header-install");
+  const help = $("install-help");
   let installEvent = null;
-  window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-    installEvent = e;
-    banner.hidden = false;
-  });
-  $("install-btn").addEventListener("click", async () => {
-    if (!installEvent) return;
+  let installed = false;
+
+  const helpText = () => {
+    const ua = navigator.userAgent;
+    if ("onbeforeinstallprompt" in window) {
+      return "<strong>Already installed?</strong>Open ez-ocr from your Start menu, Launchpad or desktop. Otherwise use the install icon at the right end of the address bar, or the browser menu and then “Install ez-ocr”.";
+    }
+    if (/Safari/.test(ua) && !/Chrome|Chromium|Edg/.test(ua) && /Macintosh/.test(ua)) {
+      return "<strong>Installing from Safari</strong>Choose File, then “Add to Dock”. Or open this page in Chrome or Edge and press Install.";
+    }
+    return "<strong>Open this page in Chrome or Edge</strong>This browser cannot install web apps. Chrome and Edge can, on both Windows and Mac.";
+  };
+
+  async function install() {
+    if (!installEvent) {
+      $("install-help-text").innerHTML = helpText();
+      help.hidden = false;
+      return;
+    }
     installEvent.prompt();
     const { outcome } = await installEvent.userChoice;
     installEvent = null;
-    if (outcome === "accepted") banner.hidden = true;
+    if (outcome === "accepted") onInstalled();
+  }
+
+  function onInstalled() {
+    installed = true;
+    headerInstall.hidden = true;
+    help.hidden = true;
+    $("install-done").hidden = false;
+    $("install-label").textContent = "Installed";
+    installBtn.disabled = true;
+    $("install-note").hidden = true;
+  }
+
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    if (installed) return;
+    installEvent = e;
+    help.hidden = true;
+    headerInstall.hidden = false;
   });
-  $("install-dismiss").addEventListener("click", () => (banner.hidden = true));
-  window.addEventListener("appinstalled", () => (banner.hidden = true));
+  window.addEventListener("appinstalled", onInstalled);
+  installBtn.addEventListener("click", install);
+  headerInstall.addEventListener("click", install);
+  $("use-in-browser").addEventListener("click", () => showApp(true));
+  matchMedia("(display-mode: standalone)").addEventListener("change", (e) => e.matches && showApp(true));
 
   if ("serviceWorker" in navigator && import.meta.env.PROD) {
     navigator.serviceWorker

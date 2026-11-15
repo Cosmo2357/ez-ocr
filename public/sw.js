@@ -1,5 +1,5 @@
 // Offline support for the browser / installed-app version of ez-ocr.
-const CACHE = "ez-ocr-v1";
+const CACHE = "ez-ocr-v2";
 const WARM = ["tesseract/worker.min.js", "tesseract/tesseract-core-simd-lstm.wasm.js", "tessdata/eng.traineddata.gz"];
 
 self.addEventListener("install", (e) => {
