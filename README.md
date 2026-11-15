@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="public/mascot.webp" alt="OCR Monster, a fluffy red monster happily holding a PDF" width="220" />
+<img src="public/mascot.webp" alt="The OCR Magic mascot, a fluffy red monster happily holding a PDF" width="220" />
 
-<h1>OCR Monster</h1>
+<h1>OCR Magic</h1>
 
 <p><strong>Scanned pages in. Real documents out.</strong></p>
 
@@ -11,7 +11,7 @@ Turn photos of pages and picture-only Word files into clean PDF, Word or text do
 Free, no account, and everything happens on your own computer.
 </p>
 
-<h3><a href="https://cosmo2357.github.io/ez-ocr/">Open OCR Monster →</a></h3>
+<h3><a href="https://cosmo2357.github.io/ez-ocr/">Open OCR Magic →</a></h3>
 
 <p>
 <sub>Free · No sign-up · Nothing is uploaded · Works offline · Windows and Mac</sub>
@@ -21,7 +21,7 @@ Free, no account, and everything happens on your own computer.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/app-dark.webp" />
-  <img src="docs/app-light.webp" alt="OCR Monster reading a two-page chapter and rebuilding it as editable text" width="860" />
+  <img src="docs/app-light.webp" alt="OCR Magic reading a two-page chapter and rebuilding it as editable text" width="860" />
 </picture>
 
 </div>
@@ -36,7 +36,7 @@ Free, no account, and everything happens on your own computer.
 
 **Picture-only Word files to PDF**
 
-Some Word files contain no text at all, only a photo of every page. Drop one in and OCR Monster reads every page and stitches it back into flowing text.
+Some Word files contain no text at all, only a photo of every page. Drop one in and OCR Magic reads every page and stitches it back into flowing text.
 
 </td>
 <td width="33%" valign="top">
@@ -59,11 +59,11 @@ The reading engine runs inside the app. Your files never leave your computer, th
 ## Get started in a minute
 
 1. Open **[cosmo2357.github.io/ez-ocr](https://cosmo2357.github.io/ez-ocr/)** in **Chrome** or **Edge**.
-2. Press the big **Install OCR Monster** button.
-3. That is it. OCR Monster opens in its own window and from now on lives in your Start menu, Launchpad or desktop like any other app.
+2. Press the big **Install OCR Magic** button.
+3. That is it. OCR Magic opens in its own window and from now on lives in your Start menu, Launchpad or desktop like any other app.
 
 <div align="center">
-<img src="docs/landing.webp" alt="The OCR Monster start page with its Install button" width="760" />
+<img src="docs/landing.webp" alt="The OCR Magic start page with its Install button" width="760" />
 </div>
 
 <br />
@@ -113,12 +113,12 @@ It follows your computer's setting. The sun/moon button in the top right switche
 
 <br />
 
-**OCR Monster** は、ページの写真や「画像だけでできた Word ファイル」を読み取って、編集できる PDF・Word・テキストに戻すアプリです。無料で、アカウント登録は不要です。処理はすべて自分のパソコンの中で行われ、ファイルが外部に送られることはありません。
+**OCR Magic** は、ページの写真や「画像だけでできた Word ファイル」を読み取って、編集できる PDF・Word・テキストに戻すアプリです。無料で、アカウント登録は不要です。処理はすべて自分のパソコンの中で行われ、ファイルが外部に送られることはありません。
 
 **始め方**
 
 1. Chrome か Edge で [cosmo2357.github.io/ez-ocr](https://cosmo2357.github.io/ez-ocr/) を開きます。
-2. 大きな **Install OCR Monster** ボタンを押します。
+2. 大きな **Install OCR Magic** ボタンを押します。
 3. 専用のウィンドウで開き、以後はスタートメニューや Launchpad から起動できます。インストール後はオフラインでも使えます。
 
 **使い方**
@@ -168,7 +168,7 @@ Every push to `main` builds the site and deploys it to GitHub Pages (`.github/wo
 
 **Native desktop build (Tauri)**
 
-The installers on the [Releases](https://github.com/Cosmo2357/ez-ocr/releases) page are the older v0.1.0 build, published as `ez-ocr`. It reads single images only and does not have the document features or the new design yet. The installed web app above is the recommended way to use OCR Monster.
+The installers on the [Releases](https://github.com/Cosmo2357/ez-ocr/releases) page are the older v0.1.0 build, published as `ez-ocr`. It reads single images only and does not have the document features or the new design yet. The installed web app above is the recommended way to use OCR Magic.
 
 To cut a new native release, bump `version` in `package.json`, `src-tauri/tauri.conf.json` and `src-tauri/Cargo.toml`, then tag and push:
 
