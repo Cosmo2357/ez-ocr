@@ -1,90 +1,176 @@
-# OCR Monster
+<div align="center">
 
-<img src="public/mascot.webp" alt="OCR Monster mascot" width="180" align="right" />
+<img src="public/mascot.webp" alt="OCR Monster, a fluffy red monster happily holding a PDF" width="220" />
 
-*(repository name: `ez-ocr`)*
+<h1>OCR Monster</h1>
 
-A tiny app that pulls text out of images so you can copy & paste it, and turns
-picture-only documents back into real text documents (PDF / Word / text).  
-Works on Windows and Mac, runs fully offline, no AI service or account needed.
-English by default, Japanese optional.
+<p><strong>Scanned pages in. Real documents out.</strong></p>
 
-## Use it in the browser
+<p>
+Turn photos of pages and picture-only Word files into clean PDF, Word or text documents.<br />
+Free, no account, and everything happens on your own computer.
+</p>
 
-No install needed: **https://cosmo2357.github.io/ez-ocr/**  
-Everything runs inside your browser; images are never uploaded anywhere. The first load fetches about 35 MB of OCR data, later visits are cached.
+<h3><a href="https://cosmo2357.github.io/ez-ocr/">Open OCR Monster →</a></h3>
 
-### Install it as an app
+<p>
+<sub>Free · No sign-up · Nothing is uploaded · Works offline · Windows and Mac</sub>
+</p>
 
-Opening the link in a normal browser tab shows a short landing page with one big **Install OCR Monster** button.
-Press it in **Chrome or Edge** and OCR Monster opens in its own window, shows up in the Start menu / Dock like
-any desktop app, and keeps working without an internet connection. The tool itself is what you see once it
-is installed; a small "Continue in the browser" link is there for browsers that cannot install web apps.
+<br />
 
-## Picture-only Word files → PDF
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/app-dark.webp" />
+  <img src="docs/app-light.webp" alt="OCR Monster reading a two-page chapter and rebuilding it as editable text" width="860" />
+</picture>
 
-Some Word files contain no text at all, just a picture of every page. To turn one into a real document:
+</div>
 
-1. Drop the `.docx` (or several page images at once) into the window
-2. Every page is read and the paragraphs, chapter headings and scene breaks are rebuilt
-3. Look through **spots to double-check**: click an entry to jump to a word the OCR was unsure about
-4. Fix anything directly in the text box, then press **PDF**, **Word** or **Text** to save
+<br />
 
-The text box uses a few simple marks you can edit:
+## What it does
+
+<table>
+<tr>
+<td width="33%" valign="top">
+
+**Picture-only Word files to PDF**
+
+Some Word files contain no text at all, only a photo of every page. Drop one in and OCR Monster reads every page and stitches it back into flowing text.
+
+</td>
+<td width="33%" valign="top">
+
+**Keeps the shape of the document**
+
+Paragraphs, chapter headings, title pages, contents lists and scene breaks are rebuilt, so you get a document you can actually read and edit, not a wall of words.
+
+</td>
+<td width="33%" valign="top">
+
+**Private by design**
+
+The reading engine runs inside the app. Your files never leave your computer, there is no AI service behind it, and it keeps working without internet.
+
+</td>
+</tr>
+</table>
+
+## Get started in a minute
+
+1. Open **[cosmo2357.github.io/ez-ocr](https://cosmo2357.github.io/ez-ocr/)** in **Chrome** or **Edge**.
+2. Press the big **Install OCR Monster** button.
+3. That is it. OCR Monster opens in its own window and from now on lives in your Start menu, Launchpad or desktop like any other app.
+
+<div align="center">
+<img src="docs/landing.webp" alt="The OCR Monster start page with its Install button" width="760" />
+</div>
+
+<br />
+
+> **Using Safari or Firefox?** Those browsers cannot install web apps with one click. On a Mac with Safari, choose **File → Add to Dock**. Otherwise press **Continue in the browser without installing** under the button and use it right there in the tab.
+
+## Turn a file into a PDF
+
+1. **Drop a file** into the window. A Word file (`.docx`), a single image, or a whole set of page images all work. You can also paste an image with Ctrl/Cmd+V.
+2. **Wait while the pages are read.** A book chapter of 80 to 90 pages takes about two minutes.
+3. **Check the flagged words.** Under the text you will see *spots to double-check*. Click one to jump straight to a word the reader was unsure about, compare it with the original and fix it if needed.
+4. **Save.** Press **PDF**, **Word** or **Text**.
+
+You can edit the text freely before saving. A few simple marks control the layout of the saved document:
 
 | Mark | Meaning |
 | --- | --- |
-| `# ` | chapter heading (starts a new page) |
-| `## ` | big title |
-| `> ` | centred line |
-| `* * *` | scene break |
-| `===` | new page |
-| blank line | new paragraph |
+| `# ` | Chapter heading, starts a new page |
+| `## ` | Big title |
+| `> ` | Centred line |
+| `* * *` | Scene break |
+| `===` | New page |
+| blank line | New paragraph |
 
-Notes: the page layout is rebuilt, so page numbers will not match the original. OCR is very good but not
-perfect, so proofread anything important. PDF export supports Latin-script text; for Japanese save as Word or Text.
-Saving files is tested in the browser / installed-app version; the downloadable desktop build below has not been updated for it yet.
+## Good to know
 
-## Download
+**Is it really private?**  
+Yes. Reading happens inside the app on your computer. Nothing is uploaded and no outside service sees your files.
 
-Grab the file for your OS from the [latest release](https://github.com/Cosmo2357/ez-ocr/releases/latest).
+**Does it need the internet?**  
+Only the first time, to load the app. After you install it, it works offline.
 
-| OS | File |
-| --- | --- |
-| Windows | `ez-ocr_x.x.x_x64-setup.exe` |
-| Mac (Apple Silicon & Intel) | `ez-ocr_x.x.x_universal.dmg` |
+**How accurate is it?**  
+Very good on clean, printed pages, but no reader is perfect. Small raised letters such as the "th" in 4th and unusual symbols are the usual trouble spots, which is why the app lists the words it was unsure about. Proofread anything important.
 
-### First-launch warning
+**Which languages?**  
+English by default, with Japanese available from the **Language** menu. Saving as PDF currently supports Latin-script text; for Japanese, save as Word or Text.
 
-The app is not signed with a developer certificate, so the OS shows a warning the first time.
+**Will the pages match the original?**  
+The words will, the page numbers will not. The document is laid out fresh on A4 pages.
 
-- **Windows**: "Windows protected your PC" → click **More info** → **Run anyway**
-- **Mac**: If you see "cannot be opened because the developer cannot be verified", open  
-  **System Settings → Privacy & Security**, scroll down and click **Open Anyway**.  
-  If that does not work, run `xattr -cr /Applications/ez-ocr.app` in Terminal.
+**Light or dark?**  
+It follows your computer's setting. The sun/moon button in the top right switches it, and your choice is remembered.
 
-## How to use
+<details>
+<summary><strong>日本語での説明</strong></summary>
 
-1. Drag & drop an image or a Word file into the window (or click to pick a file, or paste with Ctrl/Cmd+V)
-2. Text is extracted automatically. Change the language and hit **Read again** if needed
-3. Click **Copy**
+<br />
 
-## Auto update
+**OCR Monster** は、ページの写真や「画像だけでできた Word ファイル」を読み取って、編集できる PDF・Word・テキストに戻すアプリです。無料で、アカウント登録は不要です。処理はすべて自分のパソコンの中で行われ、ファイルが外部に送られることはありません。
 
-On launch the app checks GitHub for a newer version. If there is one, an **Update now** button appears at the top.
+**始め方**
 
-## Development
+1. Chrome か Edge で [cosmo2357.github.io/ez-ocr](https://cosmo2357.github.io/ez-ocr/) を開きます。
+2. 大きな **Install OCR Monster** ボタンを押します。
+3. 専用のウィンドウで開き、以後はスタートメニューや Launchpad から起動できます。インストール後はオフラインでも使えます。
+
+**使い方**
+
+1. Word ファイル（.docx）や画像をウィンドウにドラッグ＆ドロップします。
+2. 読み取りが終わるまで待ちます（80〜90ページで2分ほど）。
+3. テキストの下に出る要確認リストをクリックして、読み取りに自信のない語を原本と見比べます。
+4. **PDF**、**Word**、**Text** のいずれかで保存します。
+
+読み取り言語は右上の **Language** で日本語に切り替えられます。日本語の文書は、PDF ではなく Word かテキストで保存してください。
+
+</details>
+
+<details>
+<summary><strong>For developers</strong></summary>
+
+<br />
+
+The repository is still named `ez-ocr`, the app's original name.
+
+**Built with**
+
+- [tesseract.js](https://github.com/naptha/tesseract.js): Tesseract OCR compiled to WebAssembly, with the language data bundled
+- [fflate](https://github.com/101arrowz/fflate) to read and write `.docx`, and [pdf-lib](https://pdf-lib.js.org/) to write PDF
+- [Vite](https://vite.dev/) for the web app, which is an installable PWA with a service worker for offline use
+- [Tauri 2](https://tauri.app/) for the optional native desktop build
+
+**Run it locally**
 
 ```bash
 npm install
-npm run tauri dev     # dev mode
-npm run tauri build   # release build → src-tauri/target/release/bundle/
+npm run dev
 ```
 
-### Publishing a new version
+**Where things live**
 
-1. Bump `version` in `package.json`, `src-tauri/tauri.conf.json` and `src-tauri/Cargo.toml`
-2. Commit, tag and push
+| Path | What it is |
+| --- | --- |
+| `src/book.js` | Reads pages out of a `.docx`, runs OCR and rebuilds paragraphs and headings from the line positions |
+| `src/exporters.js` | Writes the PDF, Word and text files in the browser |
+| `src/main.js` | The interface, install flow and theme switch |
+| `public/sw.js` | Offline cache |
+
+**Publishing the web app**
+
+Every push to `main` builds the site and deploys it to GitHub Pages (`.github/workflows/pages.yml`).
+
+**Native desktop build (Tauri)**
+
+The installers on the [Releases](https://github.com/Cosmo2357/ez-ocr/releases) page are the older v0.1.0 build, published as `ez-ocr`. It reads single images only and does not have the document features or the new design yet. The installed web app above is the recommended way to use OCR Monster.
+
+To cut a new native release, bump `version` in `package.json`, `src-tauri/tauri.conf.json` and `src-tauri/Cargo.toml`, then tag and push:
 
 ```bash
 git commit -am "v0.2.0"
@@ -92,17 +178,8 @@ git tag v0.2.0
 git push origin main --tags
 ```
 
-GitHub Actions builds Windows and Mac installers and publishes them on the Releases page,  
-together with `latest.json` so existing installs get the auto-update prompt.
+GitHub Actions builds the Windows and Mac installers and publishes them with `latest.json` for auto-update. The app is not signed with a developer certificate, so Windows and macOS show a warning on first launch. Saving files from the native build has not been tested yet.
 
-### Update signing key
+The updater signing key lives at `~/.tauri/ez-ocr.key` (password in `~/.tauri/ez-ocr.key.password`) and is registered as the GitHub secrets `TAURI_SIGNING_PRIVATE_KEY` / `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`. **If the key is lost, existing installs can no longer auto-update.** Back it up.
 
-The updater signing key lives at `~/.tauri/ez-ocr.key` (password in `~/.tauri/ez-ocr.key.password`)  
-and is registered as the GitHub secrets `TAURI_SIGNING_PRIVATE_KEY` / `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`.  
-**If the key is lost, existing installs can no longer auto-update.** Back it up.
-
-## Built with
-
-- [Tauri 2](https://tauri.app/) (Rust + WebView)
-- [tesseract.js](https://github.com/naptha/tesseract.js) (Tesseract OCR compiled to WebAssembly, language data bundled)
-- [fflate](https://github.com/101arrowz/fflate) (reads and writes .docx) and [pdf-lib](https://pdf-lib.js.org/) (writes PDF)
+</details>
