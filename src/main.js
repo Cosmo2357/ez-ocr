@@ -360,7 +360,7 @@ if (!isTauri) {
   const helpText = () => {
     const ua = navigator.userAgent;
     if ("onbeforeinstallprompt" in window) {
-      return "<strong>Already installed?</strong>Open ez-ocr from your Start menu, Launchpad or desktop. Otherwise use the install icon at the right end of the address bar, or the browser menu and then “Install ez-ocr”.";
+      return "<strong>Already installed?</strong>Open OCR Monster from your Start menu, Launchpad or desktop. Otherwise use the install icon at the right end of the address bar, or the browser menu and then “Install OCR Monster”.";
     }
     if (/Safari/.test(ua) && !/Chrome|Chromium|Edg/.test(ua) && /Macintosh/.test(ua)) {
       return "<strong>Installing from Safari</strong>Choose File, then “Add to Dock”. Or open this page in Chrome or Edge and press Install.";

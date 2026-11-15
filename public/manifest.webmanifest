@@ -1,12 +1,12 @@
 {
-  "name": "ez-ocr",
-  "short_name": "ez-ocr",
+  "name": "OCR Monster",
+  "short_name": "OCR Monster",
   "description": "Pull text out of images and picture-only Word files, and save it as PDF, Word or text. Runs fully on your computer.",
   "start_url": "./?source=pwa",
   "scope": ".",
   "display": "standalone",
-  "background_color": "#f6f7fb",
-  "theme_color": "#4f46e5",
+  "background_color": "#FDFAF8",
+  "theme_color": "#E5343D",
   "icons": [
     {
       "src": "icons/icon-192.png",

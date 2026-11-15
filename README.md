@@ -1,4 +1,8 @@
-# ez-ocr
+# OCR Monster
+
+<img src="public/mascot.webp" alt="OCR Monster mascot" width="180" align="right" />
+
+*(repository name: `ez-ocr`)*
 
 A tiny app that pulls text out of images so you can copy & paste it, and turns
 picture-only documents back into real text documents (PDF / Word / text).  
@@ -12,8 +16,8 @@ Everything runs inside your browser; images are never uploaded anywhere. The fir
 
 ### Install it as an app
 
-Opening the link in a normal browser tab shows a short landing page with one big **Install ez-ocr** button.
-Press it in **Chrome or Edge** and ez-ocr opens in its own window, shows up in the Start menu / Dock like
+Opening the link in a normal browser tab shows a short landing page with one big **Install OCR Monster** button.
+Press it in **Chrome or Edge** and OCR Monster opens in its own window, shows up in the Start menu / Dock like
 any desktop app, and keeps working without an internet connection. The tool itself is what you see once it
 is installed; a small "Continue in the browser" link is there for browsers that cannot install web apps.
 

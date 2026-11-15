@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ez-ocr</title>
+    <title>OCR Monster</title>
     <meta name="description" content="Turn scanned pages and picture-only Word files into clean PDF, Word or text documents. Runs entirely on your computer." />
-    <meta name="theme-color" content="#4f46e5" />
+    <meta name="theme-color" content="#E5343D" />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <link rel="icon" type="image/png" href="/icons/icon-192.png" />
+    <link rel="icon" type="image/png" href="/icons/mascot-112.png" />
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
     <link rel="stylesheet" href="/src/style.css" />
   </head>
@@ -29,41 +29,46 @@
     <!-- ============ Landing page: shown in a normal browser tab ============ -->
     <div id="landing" class="landing" hidden>
       <header class="l-nav">
-        <div class="brand"><img class="brand-mark" src="/icons/icon-192.png" alt="" /><span>ez-ocr</span></div>
+        <div class="brand"><img class="brand-mark" src="/icons/mascot-112.png" alt="" /><span>OCR Monster</span></div>
         <a class="l-link" href="https://github.com/Cosmo2357/ez-ocr" target="_blank" rel="noopener">GitHub</a>
       </header>
 
       <main class="l-main">
         <section class="hero">
-          <span class="pill">Free · No account · Nothing is uploaded</span>
-          <h1>Scanned pages in.<br /><span class="grad">Real documents out.</span></h1>
-          <p class="lead">
-            ez-ocr reads images and picture-only Word files, rebuilds the paragraphs and chapters,
-            and saves the result as a clean PDF, Word or text file. It all happens on your own computer.
-          </p>
+          <div class="hero-copy">
+            <span class="pill">Free · No account · Nothing is uploaded</span>
+            <h1>Scanned pages in.<br /><span class="grad">Real documents out.</span></h1>
+            <p class="lead">
+              OCR Monster reads images and picture-only Word files, rebuilds the paragraphs and chapters,
+              and hands you back a clean PDF, Word or text file. It all happens on your own computer.
+            </p>
 
-          <div class="cta">
-            <button id="install-btn" class="btn btn-xl btn-primary">
-              <svg class="icon" viewBox="0 0 24 24"><use href="#i-download" /></svg>
-              <span id="install-label">Install ez-ocr</span>
-            </button>
-            <p id="install-note" class="cta-note">Installs in seconds from Chrome or Edge · Windows and Mac</p>
-          </div>
-
-          <div id="install-done" class="notice notice-ok" hidden>
-            <svg class="icon" viewBox="0 0 24 24"><use href="#i-check" /></svg>
-            <div>
-              <strong>ez-ocr is installed.</strong>
-              It has opened in its own window, and you will find it in your Start menu, Launchpad or desktop from now on. You can close this tab.
+            <div class="cta">
+              <button id="install-btn" class="btn btn-xl btn-primary">
+                <svg class="icon" viewBox="0 0 24 24"><use href="#i-download" /></svg>
+                <span id="install-label">Install OCR Monster</span>
+              </button>
+              <p id="install-note" class="cta-note">Installs in seconds from Chrome or Edge · Windows and Mac</p>
             </div>
-          </div>
 
-          <div id="install-help" class="notice" hidden>
-            <svg class="icon" viewBox="0 0 24 24"><use href="#i-monitor" /></svg>
-            <div id="install-help-text"></div>
-          </div>
+            <div id="install-done" class="notice notice-ok" hidden>
+              <svg class="icon" viewBox="0 0 24 24"><use href="#i-check" /></svg>
+              <div>
+                <strong>OCR Monster is installed.</strong>
+                It has opened in its own window, and you will find it in your Start menu, Launchpad or desktop from now on. You can close this tab.
+              </div>
+            </div>
 
-          <button id="use-in-browser" class="l-quiet">Continue in the browser without installing</button>
+            <div id="install-help" class="notice" hidden>
+              <svg class="icon" viewBox="0 0 24 24"><use href="#i-monitor" /></svg>
+              <div id="install-help-text"></div>
+            </div>
+
+            <button id="use-in-browser" class="l-quiet">Continue in the browser without installing</button>
+          </div>
+          <div class="hero-art">
+            <img src="/mascot.webp" width="800" height="800" alt="A fluffy red monster happily holding a PDF" />
+          </div>
         </section>
 
         <section class="features">
@@ -107,7 +112,7 @@
 
       <header class="topbar">
         <div class="brand">
-          <img class="brand-mark" src="/icons/icon-192.png" alt="" /><span>ez-ocr</span>
+          <img class="brand-mark" src="/icons/mascot-112.png" alt="" /><span>OCR Monster</span>
           <span id="app-version" class="version"></span>
         </div>
         <div class="controls">
