@@ -68,6 +68,8 @@ The reading engine runs inside the app. Your files never leave your computer, th
 
 <br />
 
+> **On an iPhone or iPad?** Apple does not allow one-tap installs. Tap the **Share** button in the browser toolbar, then **Add to Home Screen**. The start page shows these steps for you.
+>
 > **Using Safari or Firefox?** Those browsers cannot install web apps with one click. On a Mac with Safari, choose **File → Add to Dock**. Otherwise press **Continue in the browser without installing** under the button and use it right there in the tab.
 
 ## Turn a file into a PDF

@@ -381,8 +381,16 @@ if (!isTauri) {
   let installEvent = null;
   let installed = false;
 
+  // iPhone and iPad (iPadOS reports itself as a Mac, but has a touch screen)
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
+  const SHARE_ICON =
+    '<svg class="icon inline" viewBox="0 0 24 24"><path d="M12 15V3"/><path d="m8 7 4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>';
+
   const helpText = () => {
     const ua = navigator.userAgent;
+    if (isIOS) {
+      return `<strong>On iPhone and iPad, install from the Share menu</strong><ol><li>Tap the Share button ${SHARE_ICON} in the browser toolbar.</li><li>Scroll down and tap “Add to Home Screen”.</li><li>Tap “Add”. OCR Magic appears on your Home Screen.</li></ol>Apple does not let a web page do this for you, so the button above cannot install it directly.`;
+    }
     if ("onbeforeinstallprompt" in window) {
       return "<strong>Already installed?</strong>Open OCR Magic from your Start menu, Launchpad or desktop. Otherwise use the install icon at the right end of the address bar, or the browser menu and then “Install OCR Magic”.";
     }
@@ -392,10 +400,20 @@ if (!isTauri) {
     return "<strong>Open this page in Chrome or Edge</strong>This browser cannot install web apps. Chrome and Edge can, on both Windows and Mac.";
   };
 
+  function showHelp(draw) {
+    $("install-help-text").innerHTML = helpText();
+    help.hidden = false;
+    if (!draw) return;
+    // make it obvious that the press did something
+    help.scrollIntoView({ block: "center", behavior: "smooth" });
+    help.classList.remove("flash");
+    void help.offsetWidth;
+    help.classList.add("flash");
+  }
+
   async function install() {
     if (!installEvent) {
-      $("install-help-text").innerHTML = helpText();
-      help.hidden = false;
+      showHelp(true);
       return;
     }
     installEvent.prompt();
@@ -422,6 +440,12 @@ if (!isTauri) {
     headerInstall.hidden = false;
   });
   window.addEventListener("appinstalled", onInstalled);
+  if (isIOS) {
+    // there is no one-tap install on iOS: show the steps straight away
+    $("install-label").textContent = "How to install";
+    $("install-note").textContent = "On iPhone and iPad you add the app from the Share menu";
+    showHelp(false);
+  }
   installBtn.addEventListener("click", install);
   headerInstall.addEventListener("click", install);
   $("use-in-browser").addEventListener("click", () => showApp(true));
