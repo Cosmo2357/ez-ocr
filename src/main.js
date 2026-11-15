@@ -332,6 +332,30 @@ clearBtn.addEventListener("click", clearAll);
 copyBtn.addEventListener("click", copyText);
 result.addEventListener("input", () => setOutputEnabled(!!result.value));
 
+// --- light / dark theme: follows the system until the user picks one ---
+{
+  const root = document.documentElement;
+  const saved = () => {
+    try {
+      return localStorage.getItem("theme");
+    } catch {
+      return null;
+    }
+  };
+  document.querySelectorAll(".theme-toggle").forEach((btn) =>
+    btn.addEventListener("click", () => {
+      const next = root.dataset.theme === "dark" ? "light" : "dark";
+      root.dataset.theme = next;
+      try {
+        localStorage.setItem("theme", next);
+      } catch {}
+    })
+  );
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+    if (!saved()) root.dataset.theme = e.matches ? "dark" : "light";
+  });
+}
+
 // --- landing page vs app, install as an app (PWA), offline support ---
 // In a plain browser tab we show a landing page that leads to installing;
 // the tool itself is shown once it runs as an installed app (or in the desktop build).

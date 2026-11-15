@@ -25,25 +25,25 @@
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #171110;
-    --panel: #211816;
-    --subtle: #2c201e;
-    --border: #352825;
-    --border-strong: #4c3a36;
-    --text: #fbefea;
-    --muted: #b9a39c;
-    --accent: #ee4a52;
-    --accent-hover: #f8666c;
-    --accent-soft: rgba(245, 84, 90, 0.16);
-    --accent-text: #ff9c9c;
-    --cream: #3a2a26;
-    --ok: #34d399;
-    --ok-soft: rgba(16, 185, 129, 0.12);
-    --shadow-sm: none;
-    --shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 12px 32px -16px rgba(0, 0, 0, 0.7);
-  }
+:root { color-scheme: light; }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #171110;
+  --panel: #211816;
+  --subtle: #2c201e;
+  --border: #352825;
+  --border-strong: #4c3a36;
+  --text: #fbefea;
+  --muted: #b9a39c;
+  --accent: #ee4a52;
+  --accent-hover: #f8666c;
+  --accent-soft: rgba(245, 84, 90, 0.16);
+  --accent-text: #ff9c9c;
+  --cream: #3a2a26;
+  --ok: #34d399;
+  --ok-soft: rgba(16, 185, 129, 0.12);
+  --shadow-sm: none;
+  --shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 12px 32px -16px rgba(0, 0, 0, 0.7);
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; }
@@ -233,3 +233,14 @@ textarea:focus { outline: none; }
 .review li button.gone { opacity: .45; text-decoration: line-through; }
 .legend { margin: 0 16px 12px; font-size: 12px; }
 .drop:has(img:not([hidden])) { background: #fff; border-style: solid; border-color: var(--border); }
+
+.icon-btn {
+  display: inline-grid; place-items: center; width: 36px; height: 36px; padding: 0; border-radius: 10px; cursor: pointer;
+  border: 1px solid transparent; background: transparent; color: var(--muted); font-size: 17px; transition: background .15s, color .15s;
+}
+.icon-btn:hover { background: var(--subtle); color: var(--text); }
+.icon-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.theme-toggle .sun { display: none; }
+:root[data-theme="dark"] .theme-toggle .sun { display: block; }
+:root[data-theme="dark"] .theme-toggle .moon { display: none; }
+.l-actions { display: flex; align-items: center; gap: 14px; }
