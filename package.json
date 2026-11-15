@@ -20,6 +20,8 @@
     "@tauri-apps/api": "^2.11.1",
     "@tauri-apps/plugin-process": "^2.3.1",
     "@tauri-apps/plugin-updater": "^2.11.0",
+    "fflate": "^0.8.3",
+    "pdf-lib": "^1.17.1",
     "tesseract.js": "^6.0.1"
   },
   "private": true

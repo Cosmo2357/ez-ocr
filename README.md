@@ -1,12 +1,44 @@
 # ez-ocr
 
-A tiny desktop app that pulls text out of images so you can copy & paste it.  
-Works on Windows and Mac, runs fully offline. English by default, Japanese optional.
+A tiny app that pulls text out of images so you can copy & paste it, and turns
+picture-only documents back into real text documents (PDF / Word / text).  
+Works on Windows and Mac, runs fully offline, no AI service or account needed.
+English by default, Japanese optional.
 
 ## Use it in the browser
 
 No install needed: **https://cosmo2357.github.io/ez-ocr/**  
 Everything runs inside your browser; images are never uploaded anywhere. The first load fetches about 35 MB of OCR data, later visits are cached.
+
+### Install it as an app
+
+Open the link above in **Chrome or Edge** and press the big **Install app** button at the top
+(or the install icon at the right end of the address bar). ez-ocr then opens in its own window
+from the Start menu / Dock like any desktop app, and keeps working without an internet connection.
+
+## Picture-only Word files → PDF
+
+Some Word files contain no text at all, just a picture of every page. To turn one into a real document:
+
+1. Drop the `.docx` (or several page images at once) into the window
+2. Every page is read and the paragraphs, chapter headings and scene breaks are rebuilt
+3. Look through **spots to double-check**: click an entry to jump to a word the OCR was unsure about
+4. Fix anything directly in the text box, then press **PDF**, **Word** or **Text** to save
+
+The text box uses a few simple marks you can edit:
+
+| Mark | Meaning |
+| --- | --- |
+| `# ` | chapter heading (starts a new page) |
+| `## ` | big title |
+| `> ` | centred line |
+| `* * *` | scene break |
+| `===` | new page |
+| blank line | new paragraph |
+
+Notes: the page layout is rebuilt, so page numbers will not match the original. OCR is very good but not
+perfect, so proofread anything important. PDF export supports Latin-script text; for Japanese save as Word or Text.
+Saving files is tested in the browser / installed-app version; the downloadable desktop build below has not been updated for it yet.
 
 ## Download
 
@@ -28,7 +60,7 @@ The app is not signed with a developer certificate, so the OS shows a warning th
 
 ## How to use
 
-1. Drag & drop an image into the window (or click to pick a file, or paste with Ctrl/Cmd+V)
+1. Drag & drop an image or a Word file into the window (or click to pick a file, or paste with Ctrl/Cmd+V)
 2. Text is extracted automatically. Change the language and hit **Read again** if needed
 3. Click **Copy**
 
@@ -68,3 +100,4 @@ and is registered as the GitHub secrets `TAURI_SIGNING_PRIVATE_KEY` / `TAURI_SIG
 
 - [Tauri 2](https://tauri.app/) (Rust + WebView)
 - [tesseract.js](https://github.com/naptha/tesseract.js) (Tesseract OCR compiled to WebAssembly, language data bundled)
+- [fflate](https://github.com/101arrowz/fflate) (reads and writes .docx) and [pdf-lib](https://pdf-lib.js.org/) (writes PDF)

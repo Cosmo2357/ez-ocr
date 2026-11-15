@@ -87,3 +87,40 @@ textarea {
   background: var(--panel); color: var(--text);
 }
 textarea:focus { outline: none; border-color: var(--accent); }
+
+.install {
+  display: flex; align-items: center; gap: 16px; padding: 14px 20px;
+  background: linear-gradient(90deg, #4f46e5, #7c3aed); color: #fff;
+}
+.install[hidden] { display: none; }
+.install-text { flex: 1; display: flex; flex-direction: column; gap: 2px; font-size: 14px; }
+.install-text strong { font-size: 17px; }
+.btn-install {
+  font-size: 18px; font-weight: 700; padding: 14px 28px; border-radius: 12px;
+  background: #fff; color: #4338ca; border-color: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.25);
+}
+.btn-install:hover { background: #eef2ff; }
+.install .btn-ghost { color: #fff; border-color: transparent; }
+
+.badge {
+  position: absolute; top: 10px; right: 10px; padding: 4px 10px; border-radius: 999px;
+  background: rgba(0,0,0,.65); color: #fff; font-size: 13px;
+}
+.badge[hidden] { display: none; }
+.row.wrap { flex-wrap: wrap; }
+.sep { width: 1px; align-self: stretch; background: var(--border); margin: 0 4px; }
+#legend { margin: 0; }
+#legend[hidden] { display: none; }
+code { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 0 4px; }
+
+.review { border: 1px solid var(--border); border-radius: 12px; background: var(--panel); padding: 8px 12px; font-size: 14px; }
+.review[hidden] { display: none; }
+.review summary { cursor: pointer; font-weight: 600; }
+.review p { margin: 6px 0; }
+.review ul { list-style: none; margin: 0; padding: 0; max-height: 140px; overflow: auto; display: flex; flex-wrap: wrap; gap: 6px; }
+.review li button {
+  font: inherit; font-size: 13px; padding: 2px 8px; border-radius: 6px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--bg); color: var(--text);
+}
+.review li button:hover { border-color: var(--accent); }
+.review li button.gone { opacity: .45; text-decoration: line-through; }

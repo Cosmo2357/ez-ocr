@@ -2,6 +2,8 @@ import { createWorker } from "tesseract.js";
 import { getVersion } from "@tauri-apps/api/app";
 import { check } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
+import { isDocx, pagesFromDocx, pagesFromImages, recognizePages, reconstruct, serialize, parse } from "./book.js";
+import { toTxt, toDocx, toPdf, download } from "./exporters.js";
 
 const BASE = import.meta.env.BASE_URL;
 const $ = (id) => document.getElementById(id);
@@ -19,7 +21,16 @@ const progressWrap = $("progress-wrap");
 const progressBar = $("progress-bar");
 const statusEl = $("status");
 
-let currentImage = null; // Blob
+const pagesBadge = $("pages-badge");
+const review = $("review");
+const reviewList = $("review-list");
+const legend = $("legend");
+const saveBtns = ["save-pdf", "save-docx", "save-txt"].map($);
+const isTauri = "__TAURI_INTERNALS__" in window;
+
+let currentImage = null; // Blob (single-image mode)
+let bookPages = null; // [{ name, blob }] (multi-page mode)
+let baseName = "ocr";
 let worker = null;
 let workerLang = null;
 let busy = false;
@@ -42,20 +53,101 @@ function setStatus(status, progress) {
   progressBar.style.width = `${Math.round((progress || 0) * 100)}%`;
 }
 
-function setImage(blob) {
-  if (!blob || !blob.type.startsWith("image/")) return;
-  currentImage = blob;
+function showPreview(blob) {
   if (preview.src) URL.revokeObjectURL(preview.src);
   preview.src = URL.createObjectURL(blob);
   preview.hidden = false;
   placeholder.hidden = true;
+}
+
+function setOutputEnabled(on) {
+  copyBtn.disabled = !on;
+  saveBtns.forEach((b) => (b.disabled = !on));
+}
+
+function showReview(items) {
+  reviewList.replaceChildren();
+  review.hidden = !items.length;
+  review.open = false;
+  $("review-summary").textContent = `${items.length} spot${items.length === 1 ? "" : "s"} to double-check`;
+  for (const it of items) {
+    const li = document.createElement("li");
+    const btn = document.createElement("button");
+    btn.textContent = `p.${it.page} · ${it.word}`;
+    btn.title = it.find;
+    btn.onclick = () => {
+      let at = result.value.indexOf(it.find);
+      let len = it.find.length;
+      if (at < 0 && it.conf !== null) {
+        at = result.value.indexOf(it.word);
+        len = it.word.length;
+      }
+      btn.classList.toggle("gone", at < 0);
+      if (at < 0) return;
+      result.focus();
+      result.setSelectionRange(at, at + len);
+      result.scrollTop = (at / result.value.length) * result.scrollHeight - result.clientHeight / 2;
+    };
+    li.appendChild(btn);
+    reviewList.appendChild(li);
+  }
+}
+
+function setImage(blob) {
+  if (!blob || !blob.type.startsWith("image/")) return;
+  if (busy) return;
+  currentImage = blob;
+  bookPages = null;
+  baseName = (blob.name || "ocr").replace(/\.[^.]+$/, "");
+  pagesBadge.hidden = true;
+  showReview([]);
+  legend.hidden = true;
+  showPreview(blob);
   runBtn.disabled = false;
   progressWrap.hidden = true;
   runOcr();
 }
 
-function clearAll() {
+// A Word file or several images: treat every picture as one page of a document.
+async function setFiles(files) {
+  const list = [...(files || [])];
+  if (!list.length || busy) return;
+  const docx = list.find(isDocx);
+  const images = list.filter((f) => f.type.startsWith("image/"));
+  if (!docx && images.length <= 1) {
+    if (images[0]) setImage(images[0]);
+    else showError("Please choose an image or a Word (.docx) file");
+    return;
+  }
+  try {
+    bookPages = docx ? await pagesFromDocx(docx) : pagesFromImages(images);
+  } catch (e) {
+    console.error(e);
+    showError(e?.message || e);
+    return;
+  }
   currentImage = null;
+  baseName = (docx ? docx.name : images[0].name).replace(/\.[^.]+$/, "") + "_text";
+  showPreview(bookPages[0].blob);
+  pagesBadge.textContent = `${bookPages.length} page${bookPages.length === 1 ? "" : "s"}`;
+  pagesBadge.hidden = false;
+  runBook();
+}
+
+function showError(msg) {
+  progressWrap.hidden = false;
+  progressBar.style.width = "0%";
+  statusEl.textContent = `Error: ${msg}`;
+}
+
+function clearAll() {
+  if (busy) return;
+  currentImage = null;
+  bookPages = null;
+  pagesBadge.hidden = true;
+  showReview([]);
+  legend.hidden = true;
+  saveBtns.forEach((b) => (b.disabled = true));
   if (preview.src) URL.revokeObjectURL(preview.src);
   preview.removeAttribute("src");
   preview.hidden = true;
@@ -67,20 +159,21 @@ function clearAll() {
   fileInput.value = "";
 }
 
+const WORKER_OPTIONS = {
+  workerPath: `${BASE}tesseract/worker.min.js`,
+  corePath: `${BASE}tesseract/`,
+  langPath: `${BASE}tessdata/`,
+  gzip: true,
+  cacheMethod: "none",
+};
+
 async function getWorker(lang) {
   if (worker && workerLang === lang) return worker;
   if (worker) {
     await worker.terminate();
     worker = null;
   }
-  worker = await createWorker(lang, 1, {
-    workerPath: `${BASE}tesseract/worker.min.js`,
-    corePath: `${BASE}tesseract/`,
-    langPath: `${BASE}tessdata/`,
-    gzip: true,
-    cacheMethod: "none",
-    logger: (m) => setStatus(m.status, m.progress),
-  });
+  worker = await createWorker(lang, 1, { ...WORKER_OPTIONS, logger: (m) => setStatus(m.status, m.progress) });
   workerLang = lang;
   return worker;
 }
@@ -100,12 +193,60 @@ function cleanup(text, lang) {
   return t;
 }
 
+async function runBook() {
+  if (!bookPages || busy) return;
+  busy = true;
+  runBtn.disabled = true;
+  langSel.disabled = true;
+  setOutputEnabled(false);
+  result.value = "";
+  showReview([]);
+  const lang = langSel.value;
+  try {
+    if (worker) {
+      await worker.terminate(); // free memory for the page workers
+      worker = null;
+    }
+    const pages = await recognizePages(bookPages, lang, WORKER_OPTIONS, ({ phase, done, total }) => {
+      progressWrap.hidden = false;
+      statusEl.textContent = phase === "init" ? "Loading OCR engine" : `Reading page ${done} of ${total}`;
+      progressBar.style.width = `${Math.round((done / total) * 100)}%`;
+    });
+    const { blocks, review: spots } = reconstruct(pages, lang);
+    result.value = cleanup(serialize(blocks), lang);
+    setOutputEnabled(!!result.value);
+    legend.hidden = !result.value;
+    showReview(spots);
+    statusEl.textContent = result.value ? `Done: ${pages.length} pages. Check the text, then save it as PDF, Word or Text` : "No text found";
+    progressBar.style.width = "100%";
+  } catch (e) {
+    console.error(e);
+    showError(e?.message || e);
+  } finally {
+    busy = false;
+    runBtn.disabled = false;
+    langSel.disabled = false;
+  }
+}
+
+async function save(kind) {
+  const blocks = parse(result.value);
+  if (!blocks.length) return;
+  try {
+    const blob = kind === "pdf" ? await toPdf(blocks, baseName) : kind === "docx" ? toDocx(blocks) : toTxt(blocks);
+    download(blob, `${baseName}.${kind}`);
+  } catch (e) {
+    console.error(e);
+    showError(e?.message || e);
+  }
+}
+
 async function runOcr() {
   if (!currentImage || busy) return;
   busy = true;
   runBtn.disabled = true;
   langSel.disabled = true;
-  copyBtn.disabled = true;
+  setOutputEnabled(false);
   result.value = "";
   const lang = langSel.value;
   try {
@@ -113,7 +254,7 @@ async function runOcr() {
     setStatus("recognizing text", 0);
     const { data } = await w.recognize(currentImage);
     result.value = cleanup(data.text, lang);
-    copyBtn.disabled = !result.value;
+    setOutputEnabled(!!result.value);
     statusEl.textContent = result.value ? "Done" : "No text found";
     progressBar.style.width = "100%";
   } catch (e) {
@@ -146,7 +287,7 @@ drop.addEventListener("keydown", (e) => {
   if (e.key === "Enter" || e.key === " ") fileInput.click();
 });
 fileInput.addEventListener("change", () => {
-  if (fileInput.files?.[0]) setImage(fileInput.files[0]);
+  setFiles(fileInput.files);
 });
 
 ["dragenter", "dragover"].forEach((ev) =>
@@ -162,8 +303,7 @@ fileInput.addEventListener("change", () => {
   })
 );
 drop.addEventListener("drop", (e) => {
-  const f = e.dataTransfer?.files?.[0];
-  if (f) setImage(f);
+  setFiles(e.dataTransfer?.files);
 });
 // Prevent the webview from navigating when a file is dropped outside the zone.
 window.addEventListener("dragover", (e) => e.preventDefault());
@@ -184,10 +324,42 @@ window.addEventListener("paste", (e) => {
   }
 });
 
-runBtn.addEventListener("click", runOcr);
+runBtn.addEventListener("click", () => (bookPages ? runBook() : runOcr()));
+$("save-pdf").addEventListener("click", () => save("pdf"));
+$("save-docx").addEventListener("click", () => save("docx"));
+$("save-txt").addEventListener("click", () => save("txt"));
 clearBtn.addEventListener("click", clearAll);
 copyBtn.addEventListener("click", copyText);
-result.addEventListener("input", () => (copyBtn.disabled = !result.value));
+result.addEventListener("input", () => setOutputEnabled(!!result.value));
+
+// --- install as an app (PWA) & offline support, browser only ---
+if (!isTauri) {
+  const banner = $("install-banner");
+  let installEvent = null;
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    installEvent = e;
+    banner.hidden = false;
+  });
+  $("install-btn").addEventListener("click", async () => {
+    if (!installEvent) return;
+    installEvent.prompt();
+    const { outcome } = await installEvent.userChoice;
+    installEvent = null;
+    if (outcome === "accepted") banner.hidden = true;
+  });
+  $("install-dismiss").addEventListener("click", () => (banner.hidden = true));
+  window.addEventListener("appinstalled", () => (banner.hidden = true));
+
+  if ("serviceWorker" in navigator && import.meta.env.PROD) {
+    navigator.serviceWorker
+      .register(`${BASE}sw.js`)
+      .then(() => navigator.serviceWorker.ready)
+      // warm the cache so the installed app can read English text offline right away
+      .then((reg) => reg.active?.postMessage({ type: "warm" }))
+      .catch((e) => console.warn("offline support unavailable", e));
+  }
+}
 
 // --- version & auto update ---
 getVersion().then((v) => ($("app-version").textContent = `v${v}`)).catch(() => {});
