@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="public/mascot.webp" alt="The OCR Magic mascot, a fluffy red monster happily holding a PDF" width="220" />
+<img src="public/mascot.webp" alt="The OCR Magic mascot, a fluffy red monster in a magician's top hat holding an OCR document" width="220" />
 
 <h1>OCR Magic</h1>
 
