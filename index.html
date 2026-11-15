@@ -2,19 +2,24 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>OCR Magic</title>
     <meta name="description" content="Turn scanned pages and picture-only Word files into clean PDF, Word or text documents. Runs entirely on your computer." />
-    <meta name="theme-color" content="#E5343D" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="OCR Magic" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="icon" type="image/png" href="/icons/mascot-112.png" />
-    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <script>
       // pick the theme before first paint: saved choice, otherwise the system setting
       (function () {
         var t;
         try { t = localStorage.getItem("theme"); } catch (e) {}
-        document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        t = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = t;
+        // status bar / window title bar colour follows the header
+        document.querySelector('meta[name="theme-color"]').content = t === "dark" ? "#211816" : "#ffffff";
       })();
     </script>
     <link rel="stylesheet" href="/src/style.css" />
@@ -56,7 +61,7 @@
             <h1>Scanned pages in.<br /><span class="grad">Real documents out.</span></h1>
             <p class="lead">
               OCR Magic reads images and picture-only Word files, rebuilds the paragraphs and chapters,
-              and hands you back a clean PDF, Word or text file. It all happens on your own computer.
+              and hands you back a clean PDF, Word or text file. It all happens on your own <span id="lead-where">computer</span>.
             </p>
 
             <div class="cta">
@@ -71,7 +76,7 @@
               <svg class="icon" viewBox="0 0 24 24"><use href="#i-check" /></svg>
               <div>
                 <strong>OCR Magic is installed.</strong>
-                It has opened in its own window, and you will find it in your Start menu, Launchpad or desktop from now on. You can close this tab.
+                <span id="install-done-text">It has opened in its own window, and from now on you will find it with your other apps. You can close this tab.</span>
               </div>
             </div>
 
@@ -101,14 +106,14 @@
           <article class="feature">
             <div class="feature-icon"><svg class="icon" viewBox="0 0 24 24"><use href="#i-offline" /></svg></div>
             <h3>Works offline</h3>
-            <p>Once installed it opens from your desktop like any other app, with or without an internet connection.</p>
+            <p id="feat-offline">Once installed it opens from your desktop like any other app, with or without an internet connection.</p>
           </article>
         </section>
 
         <section class="steps">
           <h2>Three steps</h2>
           <ol>
-            <li><span class="step-n">1</span><div><strong>Install</strong><p>Press the button above. The app opens in its own window.</p></div></li>
+            <li><span class="step-n">1</span><div><strong>Install</strong><p id="step-install">Press the button above. The app opens in its own window.</p></div></li>
             <li><span class="step-n">2</span><div><strong>Drop a file</strong><p>A Word file, one image, or a whole set of page images.</p></div></li>
             <li><span class="step-n">3</span><div><strong>Check and save</strong><p>Review the flagged words, then save as PDF, Word or text.</p></div></li>
           </ol>
@@ -159,8 +164,8 @@
             <img id="preview" alt="" hidden />
             <div id="placeholder" class="placeholder">
               <div class="drop-icon"><svg class="icon" viewBox="0 0 24 24"><use href="#i-upload" /></svg></div>
-              <p class="drop-title">Drop a file here</p>
-              <p class="muted">or <span class="linkish">browse</span>, or paste an image with Ctrl/Cmd+V</p>
+              <p id="drop-title" class="drop-title">Drop a file here</p>
+              <p id="drop-hint" class="muted">or <span class="linkish">browse</span>, or paste an image with Ctrl/Cmd+V</p>
               <p class="types"><span>Word .docx</span><span>PNG</span><span>JPG</span><span>Several images</span></p>
             </div>
           </div>

@@ -250,3 +250,45 @@ textarea:focus { outline: none; }
 .icon.inline { display: inline-block; vertical-align: -3px; margin: 0 2px; color: var(--accent-text); font-size: 17px; }
 .notice.flash { animation: flash 1.1s ease-out; }
 @keyframes flash { 0%, 40% { box-shadow: 0 0 0 4px var(--ring); border-color: var(--accent); } 100% { box-shadow: var(--shadow-sm); } }
+
+/* ---------- phones ---------- */
+.topbar, .brand, .controls { min-width: 0; }
+.brand > span:first-of-type { white-space: nowrap; }
+@media (max-width: 760px) {
+  .topbar { padding: 10px 12px; gap: 8px; }
+  .brand { gap: 8px; font-size: 15px; }
+  .brand-mark { width: 28px; height: 28px; }
+  .controls { gap: 4px; flex: none; }
+  .field, #header-install { display: none; }
+  /* 16px stops iOS from zooming the page when a control is focused */
+  select { font-size: 16px; padding: 6px 28px 6px 10px; max-width: 46vw; text-overflow: ellipsis; }
+  .layout { padding: 12px; gap: 12px; }
+  .drop { min-height: 180px; margin: 12px; }
+  .card-head, .card-foot { padding: 10px 12px; }
+  textarea { min-height: 46vh; padding: 14px; }
+  .l-nav { padding: 14px 16px; }
+  .l-main { padding: 0 18px 44px; }
+  .btn-xl { font-size: 17px; padding: 15px 24px; }
+}
+@media (max-width: 420px) {
+  .version { display: none; }
+}
+
+/* ---------- safe areas (notch, rounded corners, home indicator) ---------- */
+.app { height: 100dvh; padding-bottom: env(safe-area-inset-bottom); }
+.topbar {
+  padding-top: calc(12px + env(safe-area-inset-top));
+  padding-left: max(20px, env(safe-area-inset-left));
+  padding-right: max(20px, env(safe-area-inset-right));
+}
+.layout { padding-left: max(20px, env(safe-area-inset-left)); padding-right: max(20px, env(safe-area-inset-right)); }
+.l-nav { padding-top: calc(18px + env(safe-area-inset-top)); }
+.l-nav, .l-main { padding-left: max(28px, env(safe-area-inset-left)); padding-right: max(28px, env(safe-area-inset-right)); }
+.l-foot { padding-bottom: calc(22px + env(safe-area-inset-bottom)); }
+@media (max-width: 760px) {
+  .app { height: auto; min-height: 100dvh; }
+  .topbar { padding-top: calc(10px + env(safe-area-inset-top)); padding-left: max(12px, env(safe-area-inset-left)); padding-right: max(12px, env(safe-area-inset-right)); }
+  .layout { padding-left: max(12px, env(safe-area-inset-left)); padding-right: max(12px, env(safe-area-inset-right)); }
+  .l-nav { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+  .l-main { padding-left: max(18px, env(safe-area-inset-left)); padding-right: max(18px, env(safe-area-inset-right)); }
+}

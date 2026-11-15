@@ -28,6 +28,21 @@ const legend = $("legend");
 const saveBtns = ["save-pdf", "save-docx", "save-txt"].map($);
 const isTauri = "__TAURI_INTERNALS__" in window;
 
+// Which kind of device is this? Used to show only the instructions that apply to it.
+// (iPadOS reports itself as a Mac, but has a touch screen.)
+const UA = navigator.userAgent;
+const OS = /iPhone|iPad|iPod/.test(UA) || (/Macintosh/.test(UA) && navigator.maxTouchPoints > 1)
+  ? "ios"
+  : /Android/.test(UA)
+    ? "android"
+    : /Windows/.test(UA)
+      ? "windows"
+      : /Macintosh|Mac OS X/.test(UA)
+        ? "mac"
+        : "other";
+const isPhone = OS === "ios" || OS === "android";
+document.documentElement.dataset.os = OS;
+
 let currentImage = null; // Blob (single-image mode)
 let bookPages = null; // [{ name, blob }] (multi-page mode)
 let baseName = "ocr";
@@ -332,6 +347,15 @@ clearBtn.addEventListener("click", clearAll);
 copyBtn.addEventListener("click", copyText);
 result.addEventListener("input", () => setOutputEnabled(!!result.value));
 
+// --- drop zone wording for this device ---
+if (isPhone) {
+  $("drop-title").textContent = "Choose a photo or file";
+  $("drop-hint").textContent = "Tap here to take a photo or pick from your files";
+} else {
+  const key = OS === "mac" ? "⌘V" : "Ctrl+V";
+  $("drop-hint").innerHTML = `or <span class="linkish">browse</span>, or paste an image with ${key}`;
+}
+
 // --- light / dark theme: follows the system until the user picks one ---
 {
   const root = document.documentElement;
@@ -342,17 +366,22 @@ result.addEventListener("input", () => setOutputEnabled(!!result.value));
       return null;
     }
   };
+  const setTheme = (t) => {
+    root.dataset.theme = t;
+    // keep the phone status bar / window title bar the same colour as the header
+    document.querySelector('meta[name="theme-color"]').content = t === "dark" ? "#211816" : "#ffffff";
+  };
   document.querySelectorAll(".theme-toggle").forEach((btn) =>
     btn.addEventListener("click", () => {
       const next = root.dataset.theme === "dark" ? "light" : "dark";
-      root.dataset.theme = next;
+      setTheme(next);
       try {
         localStorage.setItem("theme", next);
       } catch {}
     })
   );
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
-    if (!saved()) root.dataset.theme = e.matches ? "dark" : "light";
+    if (!saved()) setTheme(e.matches ? "dark" : "light");
   });
 }
 
@@ -381,8 +410,9 @@ if (!isTauri) {
   let installEvent = null;
   let installed = false;
 
-  // iPhone and iPad (iPadOS reports itself as a Mac, but has a touch screen)
-  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
+  const isIOS = OS === "ios";
+  // where an installed app shows up on this device
+  const HOME = { windows: "your Start menu", mac: "Launchpad or the Dock", android: "your home screen", ios: "your Home Screen", other: "your apps menu" }[OS];
   const SHARE_ICON =
     '<svg class="icon inline" viewBox="0 0 24 24"><path d="M12 15V3"/><path d="m8 7 4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>';
 
@@ -392,7 +422,7 @@ if (!isTauri) {
       return `<strong>On iPhone and iPad, install from the Share menu</strong><ol><li>Tap the Share button ${SHARE_ICON} in the browser toolbar.</li><li>Scroll down and tap “Add to Home Screen”.</li><li>Tap “Add”. OCR Magic appears on your Home Screen.</li></ol>Apple does not let a web page do this for you, so the button above cannot install it directly.`;
     }
     if ("onbeforeinstallprompt" in window) {
-      return "<strong>Already installed?</strong>Open OCR Magic from your Start menu, Launchpad or desktop. Otherwise use the install icon at the right end of the address bar, or the browser menu and then “Install OCR Magic”.";
+      return `<strong>Already installed?</strong>Open OCR Magic from ${HOME}. Otherwise use the install icon at the right end of the address bar, or the browser menu and then “Install OCR Magic”.`;
     }
     if (/Safari/.test(ua) && !/Chrome|Chromium|Edg/.test(ua) && /Macintosh/.test(ua)) {
       return "<strong>Installing from Safari</strong>Choose File, then “Add to Dock”. Or open this page in Chrome or Edge and press Install.";
@@ -440,6 +470,23 @@ if (!isTauri) {
     headerInstall.hidden = false;
   });
   window.addEventListener("appinstalled", onInstalled);
+  // --- wording for this device only ---
+  $("install-note").textContent = {
+    windows: "Installs in seconds from Chrome or Edge on Windows",
+    mac: "Installs in seconds from Chrome or Edge on Mac",
+    android: "Installs in seconds from Chrome on Android",
+    other: "Installs in seconds from Chrome or Edge",
+  }[OS] || "";
+  $("install-done-text").textContent = isPhone
+    ? `It has been added to ${HOME}. You can close this tab.`
+    : `It has opened in its own window, and from now on you will find it in ${HOME}. You can close this tab.`;
+  if (isPhone) {
+    $("lead-where").textContent = "device";
+    $("feat-offline").textContent = "Once installed it opens from your home screen like any other app, with or without an internet connection.";
+    $("step-install").textContent = isIOS
+      ? "Tap the Share button, then “Add to Home Screen”."
+      : "Press the button above. The app is added to your home screen.";
+  }
   if (isIOS) {
     // there is no one-tap install on iOS: show the steps straight away
     $("install-label").textContent = "How to install";
