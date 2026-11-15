@@ -427,10 +427,46 @@ if (!isTauri) {
   $("use-in-browser").addEventListener("click", () => showApp(true));
   matchMedia("(display-mode: standalone)").addEventListener("change", (e) => e.matches && showApp(true));
 
+  // --- automatic updates ---
+  // A new deploy ships a new service worker. We look for one on launch, whenever the
+  // window comes back into view and every 30 minutes. When it has taken over we
+  // switch to the new version straight away, unless there is work on screen: then
+  // we ask first, so nothing is lost.
   if ("serviceWorker" in navigator && import.meta.env.PROD) {
-    navigator.serviceWorker
-      .register(`${BASE}sw.js`)
-      .then(() => navigator.serviceWorker.ready)
+    const sw = navigator.serviceWorker;
+    let controlled = !!sw.controller;
+    let reloading = false;
+    const applyUpdate = () => {
+      if (reloading) return;
+      reloading = true;
+      location.reload();
+    };
+    const working = () => busy || !!currentImage || !!bookPages || !!result.value;
+    sw.addEventListener("controllerchange", () => {
+      if (!controlled) {
+        controlled = true; // first install on this device, nothing to update
+        return;
+      }
+      if (!working()) return applyUpdate();
+      $("update-text").textContent = "A new version of OCR Magic is ready";
+      $("update-btn").onclick = applyUpdate;
+      $("update-dismiss").onclick = () => ($("update-banner").hidden = true);
+      $("update-banner").hidden = false;
+    });
+
+    sw.register(`${BASE}sw.js`)
+      .then((reg) => {
+        let last = Date.now();
+        const look = () => {
+          if (Date.now() - last < 60_000) return;
+          last = Date.now();
+          reg.update().catch(() => {});
+        };
+        setInterval(look, 30 * 60_000);
+        window.addEventListener("focus", look);
+        document.addEventListener("visibilitychange", () => document.visibilityState === "visible" && look());
+        return sw.ready;
+      })
       // warm the cache so the installed app can read English text offline right away
       .then((reg) => reg.active?.postMessage({ type: "warm" }))
       .catch((e) => console.warn("offline support unavailable", e));
@@ -438,7 +474,9 @@ if (!isTauri) {
 }
 
 // --- version & auto update ---
-getVersion().then((v) => ($("app-version").textContent = `v${v}`)).catch(() => {});
+getVersion()
+  .then((v) => ($("app-version").textContent = `v${v}`))
+  .catch(() => ($("app-version").textContent = __BUILD__.replace(/^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2}).*/, "$1.$2.$3 $4:$5")));
 
 async function checkForUpdate() {
   try {

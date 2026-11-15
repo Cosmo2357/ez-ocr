@@ -105,6 +105,9 @@ English by default, with Japanese available from the **Language** menu. Saving a
 **Will the pages match the original?**  
 The words will, the page numbers will not. The document is laid out fresh on A4 pages.
 
+**How do I get updates?**  
+You don't have to do anything. The app looks for a new version when it starts and while it is open, and switches to it by itself. If you have a document on screen it asks first with an **Update now** bar, so nothing is lost. The small date next to the name shows which version you are on.
+
 **Light or dark?**  
 It follows your computer's setting. The sun/moon button in the top right switches it, and your choice is remembered.
 
@@ -164,7 +167,7 @@ npm run dev
 
 **Publishing the web app**
 
-Every push to `main` builds the site and deploys it to GitHub Pages (`.github/workflows/pages.yml`).
+Every push to `main` builds the site and deploys it to GitHub Pages (`.github/workflows/pages.yml`). Each build gets its own id, stamped into the service worker by `vite.config.js`, so installed apps notice the new version and update themselves.
 
 **Native desktop build (Tauri)**
 
