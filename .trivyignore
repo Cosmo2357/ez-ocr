@@ -1,0 +1,7 @@
+# 直せない脆弱性の許可リスト (理由つき)。上流が直った版を出したら外す。
+# zip 4.6.1: tauri-plugin-updater 2.11.0 が zip ^4 に固定している。zip は更新ファイルの展開用で、ez-ocr は自分の Release の署名つき更新だけを取りに行くため、細工された zip は届かない。
+CVE-2026-115905
+CVE-2026-115906
+CVE-2026-115909
+# glib 0.18.5: Tauri が Linux 向けに使う gtk-rs の古い版。配るのは macOS と Windows だけで、Linux 版は作っていない。
+GHSA-wrw7-89jp-8q8g

@@ -1,0 +1,79 @@
+# セキュリティ検査。push・PR のたびと、毎週月曜 9:00 (日本時間) に動く。落ちると GitHub からメールが届く。
+# このリポジトリは公開なので、自宅のランナーは使わない (他人の PR のコードが自宅の機械で動いてしまうため)。GitHub のランナーで回す (公開リポジトリは無料)。
+# 公式の Action は使わない (2026 年 3 月、trivy-action のタグが差し替えられ CI の鍵が盗まれた事件があった)。
+# 道具は版と sha256 を固定して落とす (値は ai-radio の ops/ci-tools.versions と同じ)。
+#   secrets … Gitleaks: 鍵やパスワードの書き込み (全履歴)
+#   code    … Semgrep : コードの書き方の危険
+#   deps    … Trivy   : 部品の既知の脆弱性 (npm・Cargo)・設定の誤り
+#   actions … zizmor  : GitHub Actions の危ない書き方
+name: security
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["docs/**", "**/*.md"]
+  pull_request:
+    paths-ignore: ["docs/**", "**/*.md"]
+  schedule:
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  TRIVY_VERSION: "0.75.0"
+  TRIVY_SHA256: c6e65abddb348e25f10549df887045629cf28cc72453cd1c63acb717316b3f3f
+  GITLEAKS_VERSION: "8.30.1"
+  GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+  ZIZMOR_VERSION: "1.30.1"
+  ZIZMOR_SHA256: e65324f4430c2717591937edcec90ccbefaf14c174f8ec9415e03ca875b46e1a
+  SEMGREP_VERSION: "1.179.0"
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # secrets は全履歴を見る
+          persist-credentials: false
+      - name: 道具を入れる
+        run: |
+          set -euo pipefail
+          bin="$RUNNER_TEMP/bin"; mkdir -p "$bin"
+          get() { # 名前 URL sha256 (中の実行ファイル名)
+            curl -fsSL -o "$RUNNER_TEMP/t.tgz" "$2"
+            echo "$3  $RUNNER_TEMP/t.tgz" | sha256sum -c -
+            tar -xzf "$RUNNER_TEMP/t.tgz" -C "$bin" "$1"
+          }
+          gh=https://github.com
+          get trivy    "$gh/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz" "$TRIVY_SHA256"
+          get gitleaks "$gh/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" "$GITLEAKS_SHA256"
+          get zizmor   "$gh/zizmorcore/zizmor/releases/download/v${ZIZMOR_VERSION}/zizmor-x86_64-unknown-linux-gnu.tar.gz" "$ZIZMOR_SHA256"
+          python3 -m venv "$RUNNER_TEMP/semgrep"
+          "$RUNNER_TEMP/semgrep/bin/pip" install --quiet "semgrep==${SEMGREP_VERSION}"
+          ln -s "$RUNNER_TEMP/semgrep/bin/semgrep" "$bin/semgrep"
+          echo "$bin" >> "$GITHUB_PATH"
+      - name: secrets
+        run: gitleaks git . --redact --no-banner
+      - name: code
+        if: ${{ !cancelled() }}
+        run: |
+          SEMGREP_SEND_METRICS=off semgrep scan --metrics=off --error \
+            --config p/default --config p/javascript --config p/rust --config p/github-actions \
+            --exclude node_modules --exclude dist --exclude target --exclude "public/tesseract" .
+      - name: deps
+        if: ${{ !cancelled() }}
+        run: |
+          trivy fs --exit-code 1 --scanners vuln,misconfig --severity MEDIUM,HIGH,CRITICAL \
+            --skip-dirs node_modules --skip-dirs dist --skip-dirs target .
+      - name: actions
+        if: ${{ !cancelled() }}
+        run: zizmor --offline .github

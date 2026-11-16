@@ -1,0 +1,32 @@
+# GitHub Actions の部品はコミットの ID で固定している (中身を差し替えられないように)。
+# 固定したままだと古くなるので、週に 1 回、新しい版への更新を Pull Request で提案してもらう。
+# npm と Rust (Cargo) の部品も同じ。Dependabot は GitHub 側で動くので、Actions の時間は使わない。
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+    cooldown:
+      default-days: 7
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      deps:
+        patterns: ["*"]
+    cooldown:
+      default-days: 7
+  - package-ecosystem: cargo
+    directory: /src-tauri
+    schedule:
+      interval: weekly
+    groups:
+      deps:
+        patterns: ["*"]
+    cooldown:
+      default-days: 7
