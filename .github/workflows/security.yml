@@ -1,0 +1,69 @@
+# セキュリティ検査。push・PR のたびと、毎週月曜 9:00 (日本時間) に動く。落ちると GitHub からメールが届く。
+# GitHub の無料枠は使わず、自宅 Ubuntu の軽い仕事用のランナー (home-light) で回す。道具 (gitleaks・semgrep・trivy・zizmor) は
+# ai-radio の ops/setup.sh runners がランナーの機械の /usr/local/bin に入れてある (版と sha256 は ai-radio の ops/ci-tools.versions が正本)。
+# 公式の Action は使わない (2026 年 3 月、trivy-action のタグが差し替えられ CI の鍵が盗まれた事件があった)。
+#   secrets … Gitleaks: 鍵やパスワードの書き込み (全履歴)
+#   code    … Semgrep : コードの書き方の危険
+#   deps    … Trivy   : 部品の既知の脆弱性 (npm・Cargo)・設定の誤り
+#   actions … zizmor  : GitHub Actions の危ない書き方
+name: security
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["docs/**", "**/*.md"]
+  pull_request:
+    paths-ignore: ["docs/**", "**/*.md"]
+  schedule:
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  security:
+    runs-on: home-light
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # secrets は全履歴を見る
+          persist-credentials: false
+      - name: 道具があるか
+        run: |
+          for t in gitleaks semgrep trivy zizmor; do
+            command -v "$t" >/dev/null || { echo "::error::$t がランナーに無い。ai-radio の ops/setup.sh runners で入れる"; exit 1; }
+          done
+      - name: secrets
+        run: gitleaks git . --redact --no-banner
+      - name: code
+        if: ${{ !cancelled() }}
+        run: |
+          SEMGREP_SEND_METRICS=off semgrep scan --metrics=off --error \
+            --config p/default --config p/javascript --config p/rust --config p/github-actions \
+            --exclude node_modules --exclude dist --exclude target --exclude "public/tesseract" .
+      # 脆弱性の DB はランナーの ~/.cache/trivy に置き、1 日 1 回だけ取り直す (回線が細いので毎回は落とさない)
+      - name: deps の DB
+        if: ${{ !cancelled() }}
+        run: |
+          db="$HOME/.cache/trivy/db/metadata.json"
+          if [ -f "$db" ] && [ -z "$(find "$db" -mmin +1440)" ]; then
+            echo "TRIVY_SKIP=--skip-db-update --skip-check-update" >> "$GITHUB_ENV"
+          else
+            trivy image --download-db-only
+          fi
+      - name: deps
+        if: ${{ !cancelled() }}
+        run: |
+          # shellcheck disable=SC2086
+          trivy fs $TRIVY_SKIP --skip-java-db-update --exit-code 1 --scanners vuln,misconfig --severity MEDIUM,HIGH,CRITICAL \
+            --skip-dirs node_modules --skip-dirs dist --skip-dirs target .
+      - name: actions
+        if: ${{ !cancelled() }}
+        run: zizmor --offline .github
