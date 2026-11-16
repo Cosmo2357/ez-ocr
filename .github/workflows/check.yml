@@ -1,4 +1,4 @@
-# 画面の組み立て (vite build) が通るかの確認。GitHub の無料枠は使わず、自宅 Ubuntu のランナー (ubuntu-home) で回す。
+# 画面の組み立て (vite build) と npm audit の確認。公開リポジトリなので GitHub のランナーで回す (自宅のランナーは使わない)。
 # Pages への公開は pages.yml (main への push のみ)。PR ではここで先に壊れていないか見る。
 name: check
 
@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   check:
-    runs-on: ubuntu-home
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
       contents: read

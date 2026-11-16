@@ -1,4 +1,4 @@
-# main に入ったら GitHub Pages へ公開する。組み立ては自宅 Ubuntu のランナー (ubuntu-home) で回す。
+# main に入ったら GitHub Pages へ公開する。公開リポジトリなので GitHub のランナーで回す。
 # 公開の道具 (configure-pages・upload-pages-artifact・deploy-pages) は GitHub 公式。コミットの ID で固定している。
 name: pages
 
@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   deploy:
-    runs-on: ubuntu-home
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
       contents: read
