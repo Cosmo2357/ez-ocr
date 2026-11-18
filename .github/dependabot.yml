@@ -12,6 +12,10 @@ updates:
         patterns: ["*"]
     cooldown:
       default-days: 7
+    # tauri-action 1.0 は設定の名前が変わる (includeUpdaterJson → uploadUpdaterJson など)。タグを打たないと試せないので、release.yml を直してから手で上げる
+    ignore:
+      - dependency-name: "tauri-apps/tauri-action"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: npm
     directory: /
     schedule:
@@ -21,6 +25,12 @@ updates:
         patterns: ["*"]
     cooldown:
       default-days: 7
+    # vite 8 は esbuild を別に入れないとビルドが通らない。tesseract.js は public/tesseract の手元のファイルと版を揃える必要がある。試して確かめてから手で上げる
+    ignore:
+      - dependency-name: "vite"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "tesseract.js"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: cargo
     directory: /src-tauri
     schedule:
