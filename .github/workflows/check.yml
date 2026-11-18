@@ -31,5 +31,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm audit --audit-level=moderate
+      # 配るアプリに入る部品だけを見る。vite など作るときだけ使う部品は対象外 (picomatch の ReDoS はまだ直った版が無く、作るときの自分のファイルにしか触れない。2026-11-18)
+      - run: npm audit --omit=dev --audit-level=moderate
       - run: npm run build
